@@ -16,8 +16,17 @@
                     <h1>Sol Coin</h1>
                 </div>
                 <div class="user-info">
-                    <div class="balance">
-                        <span id="user-balance">0.00</span> USDT
+                    <div class="balance-display">
+                        <div class="balance-item">
+                            <span class="balance-label">Broker Balance</span>
+                            <span class="balance-amount" id="broker-balance">20.00</span>
+                            <span class="balance-currency">USDT</span>
+                        </div>
+                        <div class="balance-item">
+                            <span class="balance-label">Fund Balance</span>
+                            <span class="balance-amount" id="fund-balance">0.00</span>
+                            <span class="balance-currency">USDT</span>
+                        </div>
                     </div>
                     <div class="user-avatar">
                         <i class="fas fa-user"></i>
@@ -47,18 +56,25 @@
         <div class="tab-content active" id="mine-tab">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Cloud Mining</div>
-                    <div class="card-badge">Active</div>
+                    <div class="card-title">7 Days Free Mining</div>
+                    <div class="card-badge free">FREE</div>
                 </div>
                 <div class="mining-container">
                     <div class="mining-animation">
-                        <div class="mining-circle"></div>
+                        <div class="mining-orbit mining-orbit-1"></div>
+                        <div class="mining-orbit mining-orbit-2"></div>
+                        <div class="mining-orbit mining-orbit-3"></div>
+                        <div class="mining-particle particle-1"></div>
+                        <div class="mining-particle particle-2"></div>
+                        <div class="mining-particle particle-3"></div>
+                        <div class="mining-particle particle-4"></div>
                         <div class="mining-core">
                             <i class="fas fa-coins"></i>
                         </div>
+                        <div class="mining-glow"></div>
                     </div>
-                    <h2>Sol Coin Mining</h2>
-                    <p>Mine SOL coins with our advanced cloud mining technology</p>
+                    <h2>Free Cloud Mining</h2>
+                    <p>Start 7 days free mining and earn SOL coins daily</p>
                     
                     <div class="mining-stats">
                         <div class="stat">
@@ -76,10 +92,10 @@
                     </div>
                     
                     <button class="btn btn-primary btn-large btn-glow" id="start-mining-btn">
-                        <i class="fas fa-play"></i> Start Mining
+                        <i class="fas fa-play"></i> Start Free Mining
                     </button>
                     <button class="btn btn-success btn-large btn-glow" id="claim-mining-btn" style="display: none;">
-                        <i class="fas fa-coins"></i> Claim Rewards
+                        <i class="fas fa-coins"></i> Claim 7 USDT
                     </button>
                 </div>
             </div>
@@ -203,9 +219,25 @@
                 </div>
                 
                 <div class="withdraw-form">
-                    <div class="form-group">
-                        <label class="form-label">Currently Available Assets (USDT)</label>
-                        <div class="available-balance">0.000000 USDT</div>
+                    <div class="balance-display-withdraw">
+                        <div class="balance-card">
+                            <div class="balance-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="balance-info">
+                                <div class="balance-label">Broker Balance</div>
+                                <div class="balance-amount-large" id="withdraw-broker-balance">20.00 USDT</div>
+                            </div>
+                        </div>
+                        <div class="balance-card">
+                            <div class="balance-icon">
+                                <i class="fas fa-piggy-bank"></i>
+                            </div>
+                            <div class="balance-info">
+                                <div class="balance-label">Fund Balance</div>
+                                <div class="balance-amount-large" id="withdraw-fund-balance">0.00 USDT</div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -252,11 +284,6 @@
                         <div class="amount-limits">
                             Minimum: 1.0000 USDT | Maximum: 999999.00 USDT
                         </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Security Password</label>
-                        <input type="password" class="form-control" id="security-password" placeholder="Enter your security password">
                     </div>
                     
                     <div class="withdraw-summary">
@@ -322,12 +349,17 @@
                 </div>
                 
                 <div class="deposit-address" id="deposit-address">
-                    Loading address...
+                    0x53f90e7a0d2834b772890f4f456d51aaed61de43
                 </div>
                 
-                <button class="btn btn-secondary" id="copy-address">
-                    <i class="fas fa-copy"></i> Copy Address
-                </button>
+                <div class="deposit-actions">
+                    <button class="btn btn-secondary" id="copy-address">
+                        <i class="fas fa-copy"></i> Copy Address
+                    </button>
+                    <button class="btn btn-primary" id="confirm-deposit">
+                        <i class="fas fa-check"></i> Confirm Deposit
+                    </button>
+                </div>
                 
                 <div class="deposit-notice">
                     <p><i class="fas fa-exclamation-triangle"></i> Important:</p>
