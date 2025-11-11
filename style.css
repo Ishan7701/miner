@@ -10,6 +10,9 @@
     --danger: #dc3545;
     --gray: #6c757d;
     --gray-light: #e9ecef;
+    --quantum-blue: #00f0ff;
+    --quantum-purple: #b967ff;
+    --quantum-pink: #ff2a6d;
 }
 
 * {
@@ -200,8 +203,8 @@ header {
 }
 
 .mining-animation {
-    width: 250px;
-    height: 250px;
+    width: 300px;
+    height: 300px;
     margin: 0 auto 20px;
     position: relative;
     display: flex;
@@ -209,116 +212,206 @@ header {
     justify-content: center;
 }
 
-.mining-orbit {
+.quantum-ring {
     position: absolute;
     border-radius: 50%;
-    border: 2px solid var(--primary);
-    animation: rotate 10s linear infinite;
+    border: 2px solid transparent;
+    animation: quantumRotate 20s linear infinite;
 }
 
-.mining-orbit-1 {
-    width: 200px;
-    height: 200px;
-    animation-duration: 15s;
-    border-color: rgba(255, 153, 0, 0.6);
+.ring-1 {
+    width: 280px;
+    height: 280px;
+    border-image: linear-gradient(45deg, var(--quantum-blue), var(--quantum-purple)) 1;
+    animation-duration: 25s;
 }
 
-.mining-orbit-2 {
-    width: 150px;
-    height: 150px;
-    animation-duration: 12s;
+.ring-2 {
+    width: 220px;
+    height: 220px;
+    border-image: linear-gradient(45deg, var(--quantum-pink), var(--quantum-blue)) 1;
+    animation-duration: 20s;
     animation-direction: reverse;
-    border-color: rgba(255, 153, 0, 0.4);
 }
 
-.mining-orbit-3 {
-    width: 100px;
-    height: 100px;
-    animation-duration: 8s;
-    border-color: rgba(255, 153, 0, 0.3);
+.ring-3 {
+    width: 160px;
+    height: 160px;
+    border-image: linear-gradient(45deg, var(--quantum-purple), var(--quantum-pink)) 1;
+    animation-duration: 15s;
 }
 
-.mining-particle {
+.energy-orb {
     position: absolute;
-    width: 8px;
-    height: 8px;
-    background: var(--primary);
     border-radius: 50%;
-    animation: float 3s ease-in-out infinite;
+    background: radial-gradient(circle, var(--quantum-blue) 0%, transparent 70%);
+    opacity: 0.7;
+    animation: quantumFloat 4s ease-in-out infinite;
 }
 
-.particle-1 {
-    top: 20%;
-    left: 20%;
+.orb-1 {
+    width: 40px;
+    height: 40px;
+    top: 50px;
+    left: 50px;
     animation-delay: 0s;
 }
 
-.particle-2 {
-    top: 70%;
-    left: 80%;
-    animation-delay: 0.5s;
+.orb-2 {
+    width: 30px;
+    height: 30px;
+    bottom: 60px;
+    right: 60px;
+    background: radial-gradient(circle, var(--quantum-pink) 0%, transparent 70%);
+    animation-delay: 1.3s;
 }
 
-.particle-3 {
-    top: 80%;
-    left: 20%;
-    animation-delay: 1s;
+.orb-3 {
+    width: 25px;
+    height: 25px;
+    top: 70px;
+    right: 70px;
+    background: radial-gradient(circle, var(--quantum-purple) 0%, transparent 70%);
+    animation-delay: 2.6s;
 }
 
-.particle-4 {
-    top: 20%;
-    left: 70%;
-    animation-delay: 1.5s;
-}
-
-.mining-core {
-    width: 80px;
-    height: 80px;
+.quantum-particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
-    background: var(--primary);
+    background: var(--quantum-blue);
+    animation: quantumParticle 3s linear infinite;
+}
+
+.p1 { top: 20%; left: 20%; animation-delay: 0s; }
+.p2 { top: 80%; left: 80%; animation-delay: 0.5s; }
+.p3 { top: 80%; left: 20%; animation-delay: 1s; }
+.p4 { top: 20%; left: 80%; animation-delay: 1.5s; }
+.p5 { top: 50%; left: 10%; animation-delay: 2s; }
+.p6 { top: 50%; left: 90%; animation-delay: 2.5s; }
+
+.quantum-core {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--quantum-blue), var(--quantum-purple));
     position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 30px var(--primary);
-    animation: pulse 2s infinite;
+    box-shadow: 
+        0 0 30px var(--quantum-blue),
+        0 0 60px var(--quantum-purple),
+        0 0 90px var(--quantum-pink);
+    animation: quantumPulse 2s ease-in-out infinite;
     z-index: 10;
 }
 
-.mining-core i {
-    font-size: 30px;
-    color: var(--dark);
-}
-
-.mining-glow {
-    position: absolute;
-    width: 120px;
-    height: 120px;
+.core-inner {
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
-    opacity: 0.3;
-    animation: glow 3s ease-in-out infinite;
+    background: linear-gradient(45deg, var(--quantum-pink), var(--quantum-blue));
+    animation: coreSpin 3s linear infinite;
 }
 
-@keyframes rotate {
+.quantum-core i {
+    font-size: 30px;
+    color: white;
+    position: absolute;
+    z-index: 11;
+}
+
+.quantum-glow {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--quantum-blue) 0%, transparent 70%);
+    opacity: 0.3;
+    animation: quantumGlow 4s ease-in-out infinite;
+    filter: blur(20px);
+}
+
+.energy-beam {
+    position: absolute;
+    width: 4px;
+    height: 150px;
+    background: linear-gradient(to bottom, transparent, var(--quantum-blue), transparent);
+    animation: energyBeam 2s linear infinite;
+}
+
+.beam-1 {
+    top: -75px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation-delay: 0s;
+}
+
+.beam-2 {
+    top: 50%;
+    right: -75px;
+    transform: translateY(-50%) rotate(90deg);
+    animation-delay: 0.7s;
+}
+
+.beam-3 {
+    bottom: -75px;
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+    animation-delay: 1.4s;
+}
+
+@keyframes quantumRotate {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-@keyframes float {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-20px) scale(1.2); }
+@keyframes quantumFloat {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.7; }
+    50% { transform: translateY(-20px) scale(1.2); opacity: 1; }
 }
 
-@keyframes pulse {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 153, 0, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(255, 153, 0, 0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 153, 0, 0); }
+@keyframes quantumParticle {
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    25% { transform: translate(20px, -20px) scale(1.2); opacity: 0.8; }
+    50% { transform: translate(40px, 0) scale(1); opacity: 1; }
+    75% { transform: translate(20px, 20px) scale(0.8); opacity: 0.8; }
+    100% { transform: translate(0, 0) scale(1); opacity: 1; }
 }
 
-@keyframes glow {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(1.1); }
+@keyframes quantumPulse {
+    0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 
+            0 0 30px var(--quantum-blue),
+            0 0 60px var(--quantum-purple),
+            0 0 90px var(--quantum-pink);
+    }
+    50% { 
+        transform: scale(1.1); 
+        box-shadow: 
+            0 0 40px var(--quantum-blue),
+            0 0 80px var(--quantum-purple),
+            0 0 120px var(--quantum-pink);
+    }
+}
+
+@keyframes coreSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes quantumGlow {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+@keyframes energyBeam {
+    0% { opacity: 0; transform: translateX(-50%) scaleY(0); }
+    50% { opacity: 1; transform: translateX(-50%) scaleY(1); }
+    100% { opacity: 0; transform: translateX(-50%) scaleY(0); }
 }
 
 .mining-stats {
@@ -340,6 +433,22 @@ header {
 .stat-label {
     font-size: 14px;
     color: var(--gray-light);
+}
+
+.boost-info {
+    margin: 15px 0;
+}
+
+.boost-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(45deg, var(--quantum-purple), var(--quantum-pink));
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
 }
 
 .btn {
@@ -408,6 +517,51 @@ header {
     box-shadow: 0 0 15px var(--primary);
 }
 
+.active-machines {
+    text-align: center;
+    padding: 20px;
+}
+
+.no-machines {
+    color: var(--gray);
+    font-style: italic;
+}
+
+.machine-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid var(--primary);
+}
+
+.machine-info h4 {
+    margin-bottom: 5px;
+    color: var(--primary);
+}
+
+.machine-stats {
+    display: flex;
+    gap: 15px;
+}
+
+.machine-stat {
+    text-align: center;
+}
+
+.machine-stat-value {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.machine-stat-label {
+    font-size: 12px;
+    color: var(--gray-light);
+}
+
 .upgrade-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -421,6 +575,23 @@ header {
     text-align: center;
     transition: all 0.3s ease;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.upgrade-item:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: 0.5s;
+}
+
+.upgrade-item:hover:before {
+    left: 100%;
 }
 
 .upgrade-item:hover {
@@ -451,6 +622,12 @@ header {
 .upgrade-output {
     color: var(--success);
     margin-bottom: 15px;
+}
+
+.upgrade-boost {
+    color: var(--quantum-blue);
+    font-size: 14px;
+    margin-bottom: 10px;
 }
 
 .team-stats {
@@ -600,9 +777,9 @@ header {
     pointer-events: none;
 }
 
-.network-options {
+.network-options-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 10px;
     margin-bottom: 20px;
 }
@@ -615,11 +792,55 @@ header {
     cursor: pointer;
     transition: all 0.3s ease;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.network-option:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: 0.5s;
+}
+
+.network-option:hover:before {
+    left: 100%;
 }
 
 .network-option:hover, .network-option.active {
     border-color: var(--primary);
     background: rgba(255, 153, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.network-icon {
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: var(--primary);
+}
+
+.network-name {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.network-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.network-option.active .network-glow {
+    opacity: 0.1;
 }
 
 .loading-screen {
@@ -719,11 +940,20 @@ header {
     cursor: pointer;
 }
 
+.deposit-address-container {
+    margin: 15px 0;
+}
+
+.deposit-label {
+    font-size: 14px;
+    color: var(--gray-light);
+    margin-bottom: 8px;
+}
+
 .deposit-address {
     background: rgba(0, 0, 0, 0.3);
     border-radius: 10px;
     padding: 15px;
-    margin: 15px 0;
     word-break: break-all;
     font-family: monospace;
     text-align: center;
@@ -739,6 +969,34 @@ header {
 
 .deposit-actions .btn {
     flex: 1;
+}
+
+.deposit-timer {
+    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255, 193, 7, 0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.timer-label {
+    font-size: 14px;
+    color: var(--gray-light);
+    margin-bottom: 8px;
+}
+
+.timer-display {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--warning);
+    font-family: monospace;
+}
+
+.amount-hint {
+    font-size: 12px;
+    color: var(--gray-light);
+    margin-top: 5px;
 }
 
 .footer {
@@ -971,23 +1229,33 @@ header {
     }
     
     .mining-animation {
-        width: 200px;
-        height: 200px;
+        width: 250px;
+        height: 250px;
     }
     
-    .mining-orbit-1 {
-        width: 160px;
-        height: 160px;
+    .ring-1 {
+        width: 230px;
+        height: 230px;
     }
     
-    .mining-orbit-2 {
-        width: 120px;
-        height: 120px;
+    .ring-2 {
+        width: 180px;
+        height: 180px;
     }
     
-    .mining-orbit-3 {
+    .ring-3 {
+        width: 130px;
+        height: 130px;
+    }
+    
+    .quantum-core {
         width: 80px;
         height: 80px;
+    }
+    
+    .core-inner {
+        width: 50px;
+        height: 50px;
     }
     
     .social-share {
@@ -1009,5 +1277,9 @@ header {
     
     .deposit-actions {
         flex-direction: column;
+    }
+    
+    .network-options-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
