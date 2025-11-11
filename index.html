@@ -19,12 +19,12 @@
                     <div class="balance-display">
                         <div class="balance-item">
                             <span class="balance-label">Broker Balance</span>
-                            <span class="balance-amount" id="broker-balance">20.00</span>
+                            <span class="balance-amount" id="broker-balance">420.00</span>
                             <span class="balance-currency">USDT</span>
                         </div>
                         <div class="balance-item">
                             <span class="balance-label">Fund Balance</span>
-                            <span class="balance-amount" id="fund-balance">0.00</span>
+                            <span class="balance-amount" id="fund-balance">7.00</span>
                             <span class="balance-currency">USDT</span>
                         </div>
                     </div>
@@ -56,25 +56,34 @@
         <div class="tab-content active" id="mine-tab">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">7 Days Free Mining</div>
+                    <div class="card-title">Daily Free Mining</div>
                     <div class="card-badge free">FREE</div>
                 </div>
                 <div class="mining-container">
                     <div class="mining-animation">
-                        <div class="mining-orbit mining-orbit-1"></div>
-                        <div class="mining-orbit mining-orbit-2"></div>
-                        <div class="mining-orbit mining-orbit-3"></div>
-                        <div class="mining-particle particle-1"></div>
-                        <div class="mining-particle particle-2"></div>
-                        <div class="mining-particle particle-3"></div>
-                        <div class="mining-particle particle-4"></div>
-                        <div class="mining-core">
-                            <i class="fas fa-coins"></i>
+                        <div class="quantum-ring ring-1"></div>
+                        <div class="quantum-ring ring-2"></div>
+                        <div class="quantum-ring ring-3"></div>
+                        <div class="energy-orb orb-1"></div>
+                        <div class="energy-orb orb-2"></div>
+                        <div class="energy-orb orb-3"></div>
+                        <div class="quantum-particle p1"></div>
+                        <div class="quantum-particle p2"></div>
+                        <div class="quantum-particle p3"></div>
+                        <div class="quantum-particle p4"></div>
+                        <div class="quantum-particle p5"></div>
+                        <div class="quantum-particle p6"></div>
+                        <div class="quantum-core">
+                            <div class="core-inner"></div>
+                            <i class="fas fa-bolt"></i>
                         </div>
-                        <div class="mining-glow"></div>
+                        <div class="quantum-glow"></div>
+                        <div class="energy-beam beam-1"></div>
+                        <div class="energy-beam beam-2"></div>
+                        <div class="energy-beam beam-3"></div>
                     </div>
-                    <h2>Free Cloud Mining</h2>
-                    <p>Start 7 days free mining and earn SOL coins daily</p>
+                    <h2>Quantum Cloud Mining</h2>
+                    <p>Daily free mining with advanced quantum technology</p>
                     
                     <div class="mining-stats">
                         <div class="stat">
@@ -91,12 +100,28 @@
                         </div>
                     </div>
                     
+                    <div class="boost-info">
+                        <div class="boost-badge">
+                            <i class="fas fa-rocket"></i>
+                            <span id="boost-percent">0%</span> Mining Boost
+                        </div>
+                    </div>
+                    
                     <button class="btn btn-primary btn-large btn-glow" id="start-mining-btn">
-                        <i class="fas fa-play"></i> Start Free Mining
+                        <i class="fas fa-play"></i> Start Daily Mining
                     </button>
                     <button class="btn btn-success btn-large btn-glow" id="claim-mining-btn" style="display: none;">
                         <i class="fas fa-coins"></i> Claim 7 USDT
                     </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Active Mining Machines</div>
+                </div>
+                <div class="active-machines" id="active-machines">
+                    <div class="no-machines">No active mining machines</div>
                 </div>
             </div>
             
@@ -124,7 +149,7 @@
         <div class="tab-content" id="upgrade-tab">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Mining Tools Upgrade</div>
+                    <div class="card-title">Quantum Mining Tools</div>
                 </div>
                 <p>Upgrade your mining tools to increase your mining speed and earnings.</p>
                 
@@ -226,7 +251,7 @@
                             </div>
                             <div class="balance-info">
                                 <div class="balance-label">Broker Balance</div>
-                                <div class="balance-amount-large" id="withdraw-broker-balance">20.00 USDT</div>
+                                <div class="balance-amount-large" id="withdraw-broker-balance">420.00 USDT</div>
                             </div>
                         </div>
                         <div class="balance-card">
@@ -235,34 +260,69 @@
                             </div>
                             <div class="balance-info">
                                 <div class="balance-label">Fund Balance</div>
-                                <div class="balance-amount-large" id="withdraw-fund-balance">0.00 USDT</div>
+                                <div class="balance-amount-large" id="withdraw-fund-balance">7.00 USDT</div>
                             </div>
                         </div>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label">Select Mainnet</label>
-                        <div class="network-options">
+                        <div class="network-options-grid">
                             <div class="network-option active" data-network="BEP20-USDT">
-                                <div>BEP20-USDT</div>
+                                <div class="network-icon">
+                                    <i class="fab fa-ethereum"></i>
+                                </div>
+                                <div class="network-name">BEP20-USDT</div>
+                                <div class="network-glow"></div>
                             </div>
                             <div class="network-option" data-network="BEP20-USDC">
-                                <div>BEP20-USDC</div>
+                                <div class="network-icon">
+                                    <i class="fab fa-ethereum"></i>
+                                </div>
+                                <div class="network-name">BEP20-USDC</div>
+                                <div class="network-glow"></div>
                             </div>
                             <div class="network-option" data-network="POLYGON-USDT">
-                                <div>POLYGON-USDT</div>
+                                <div class="network-icon">
+                                    <i class="fas fa-gem"></i>
+                                </div>
+                                <div class="network-name">POLYGON-USDT</div>
+                                <div class="network-glow"></div>
                             </div>
                             <div class="network-option" data-network="POLYGON-USDC">
-                                <div>POLYGON-USDC</div>
+                                <div class="network-icon">
+                                    <i class="fas fa-gem"></i>
+                                </div>
+                                <div class="network-name">POLYGON-USDC</div>
+                                <div class="network-glow"></div>
                             </div>
                             <div class="network-option" data-network="ETH-USDT">
-                                <div>ETH-USDT</div>
+                                <div class="network-icon">
+                                    <i class="fab fa-ethereum"></i>
+                                </div>
+                                <div class="network-name">ETH-USDT</div>
+                                <div class="network-glow"></div>
                             </div>
                             <div class="network-option" data-network="ETH-USDC">
-                                <div>ETH-USDC</div>
+                                <div class="network-icon">
+                                    <i class="fab fa-ethereum"></i>
+                                </div>
+                                <div class="network-name">ETH-USDC</div>
+                                <div class="network-glow"></div>
                             </div>
                             <div class="network-option" data-network="TRC20-USDT">
-                                <div>TRC20-USDT</div>
+                                <div class="network-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <div class="network-name">TRC20-USDT</div>
+                                <div class="network-glow"></div>
+                            </div>
+                            <div class="network-option" data-network="TON">
+                                <div class="network-icon">
+                                    <i class="fas fa-rocket"></i>
+                                </div>
+                                <div class="network-name">TON</div>
+                                <div class="network-glow"></div>
                             </div>
                         </div>
                     </div>
@@ -344,12 +404,22 @@
                             <option value="TRX">TRX</option>
                             <option value="BNB">BNB</option>
                             <option value="ETH">ETH</option>
+                            <option value="TON">TON</option>
                         </select>
                     </div>
                 </div>
                 
-                <div class="deposit-address" id="deposit-address">
-                    0x53f90e7a0d2834b772890f4f456d51aaed61de43
+                <div class="form-group">
+                    <label class="form-label">Deposit Amount (USDT)</label>
+                    <input type="number" class="form-control" id="deposit-amount" placeholder="Enter amount" min="10">
+                    <div class="amount-hint">Minimum deposit: 10 USDT</div>
+                </div>
+                
+                <div class="deposit-address-container">
+                    <div class="deposit-label">Send exactly <span id="exact-amount">0.00</span> USDT to:</div>
+                    <div class="deposit-address" id="deposit-address">
+                        0x53f90e7a0d2834b772890f4f456d51aaed61de43
+                    </div>
                 </div>
                 
                 <div class="deposit-actions">
@@ -359,6 +429,11 @@
                     <button class="btn btn-primary" id="confirm-deposit">
                         <i class="fas fa-check"></i> Confirm Deposit
                     </button>
+                </div>
+                
+                <div class="deposit-timer">
+                    <div class="timer-label">USDT will be added in:</div>
+                    <div class="timer-display" id="deposit-timer">03:00</div>
                 </div>
                 
                 <div class="deposit-notice">
